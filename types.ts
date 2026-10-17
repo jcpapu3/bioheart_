@@ -1,7 +1,5 @@
 export interface Packet {
   ecg: number; // 0-1023, -1 = electrodos desconectados
-  bpm: number; // BPM del MAX30102 (0 = sin dedo)
-  spo2: number; // SpO2 estimado (0 = sin dedo)
   t: number; // timestamp ms
 }
 
@@ -24,10 +22,7 @@ export interface Measurement {
   id: string;
   date: string;
   durationSec: number;
-  bpm: number; // valor final mostrado
-  bpmEcg: number;
-  bpmSensor: number;
-  spo2: number;
+  bpm: number;
   quality: Quality;
   qualityScore: number;
   beats: number;

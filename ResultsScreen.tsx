@@ -47,8 +47,8 @@ export function ResultsScreen({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Stat label="Frecuencia cardíaca" value={m.bpm > 0 ? `${m.bpm} BPM` : '--'} sub={`ECG ${m.bpmEcg || '--'} · dedo ${m.bpmSensor || '--'}`} />
-        <Stat label="Oxígeno (SpO₂ est.)" value={m.spo2 > 0 ? `${m.spo2}%` : '--'} />
+        <Stat label="Frecuencia cardíaca" value={m.bpm > 0 ? `${m.bpm} BPM` : '--'} />
+        <Stat label="Variabilidad (SDNN)" value={m.sdnn > 0 ? `${m.sdnn} ms` : '--'} />
         <Stat label="Calidad de señal" value={qualityText[m.quality]} sub={`${Math.round(m.qualityScore * 100)} / 100`} />
         <Stat label="Latidos detectados" value={String(m.beats)} sub={`en ${m.durationSec} s`} />
       </div>

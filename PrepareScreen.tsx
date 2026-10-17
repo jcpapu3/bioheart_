@@ -33,13 +33,6 @@ export function PrepareScreen({ onNext, onBack }: { onNext: () => void; onBack: 
               </div>
             </div>
           ))}
-          <div className="flex items-center gap-3 rounded-lg bg-pink-50 p-3">
-            <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-pink-500 text-lg text-white">☝</span>
-            <div>
-              <p className="font-semibold text-gray-900">Dedo en el sensor</p>
-              <p className="text-sm text-gray-600">Apoya el índice sobre el MAX30102, quieto y sin presionar fuerte.</p>
-            </div>
-          </div>
         </div>
 
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-gray-600">
@@ -49,7 +42,7 @@ export function PrepareScreen({ onNext, onBack }: { onNext: () => void; onBack: 
 
         <label className="mt-4 flex items-center gap-3 text-sm font-medium text-gray-800">
           <input type="checkbox" checked={ready} onChange={(e) => setReady(e.target.checked)} className="h-5 w-5" />
-          Ya me coloqué los electrodos y el dedo
+          Ya me coloqué los electrodos
         </label>
       </Card>
 

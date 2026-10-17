@@ -1,17 +1,17 @@
 /* Fuente de datos: Bluetooth clásico (HC-05) o modo demostración.
-   El Arduino envía una línea por muestra:  ecg,bpm,spo2\n  */
+   El Arduino envía una línea por muestra con el valor del ECG:  512\n
+   (se ignoran columnas extra por si el formato antiguo  ecg,bpm,spo2  sigue cargado) */
 
 import { Capacitor, type PluginListenerHandle } from '@capacitor/core';
 import { BluetoothSerial } from '@e-is/capacitor-bluetooth-serial';
 import type { Device, Packet } from '../types';
 
 export function parseLine(line: string): Packet | null {
-  const p = line.trim().split(',');
-  if (p.length !== 3) return null;
-  const [ecg, bpm, spo2] = p.map(Number);
-  if ([ecg, bpm, spo2].some((v) => Number.isNaN(v))) return null;
-  if (ecg < -1 || ecg > 1023 || bpm < 0 || bpm > 255 || spo2 < 0 || spo2 > 100) return null;
-  return { ecg, bpm, spo2, t: Date.now() };
+  const first = line.trim().split(',')[0];
+  if (first === '') return null;
+  const ecg = Number(first);
+  if (Number.isNaN(ecg) || ecg < -1 || ecg > 1023) return null;
+  return { ecg, t: Date.now() };
 }
 
 export const isNative = Capacitor.isNativePlatform();
@@ -86,7 +86,7 @@ export const bluetooth = {
   },
 };
 
-/* ---------- Modo demostración: ECG sintético a 50 Hz ---------- */
+/* ---------- Modo demostración: ECG sintético a 100 Hz ---------- */
 
 const g = (x: number, c: number, s: number) => Math.exp(-0.5 * ((x - c) / s) ** 2);
 
@@ -112,13 +112,8 @@ export const demo = {
     const t0 = performance.now();
     demoTimer = setInterval(() => {
       const t = (performance.now() - t0) / 1000;
-      cb({
-        ecg: Math.round(demoSample(t)),
-        bpm: t > 6 ? Math.round(72 + (Math.random() - 0.5) * 3) : 0,
-        spo2: t > 8 ? Math.round(97 + (Math.random() - 0.5) * 2) : 0,
-        t: Date.now(),
-      });
-    }, 20);
+      cb({ ecg: Math.round(demoSample(t)), t: Date.now() });
+    }, 10);
   },
   stop(): void {
     if (demoTimer) clearInterval(demoTimer);

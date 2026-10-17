@@ -2,25 +2,22 @@
 import { analyzeEcg } from '../src/services/ecgProcessor';
 import { demoSample } from '../src/services/dataSource';
 import { buildMeasurement } from '../src/services/interpreter';
-import type { Packet } from '../src/types';
 
-const fs = 50;
+const fs = 100;
 const seconds = 60;
 const samples: number[] = [];
 const times: number[] = [];
-const packets: Packet[] = [];
 for (let i = 0; i < fs * seconds; i++) {
   const t = i / fs;
   const ecg = Math.round(demoSample(t));
   samples.push(ecg);
   times.push(i * (1000 / fs));
-  packets.push({ ecg, bpm: t > 6 ? 72 : 0, spo2: t > 8 ? 97 : 0, t: i * 20 });
 }
 
 const a = analyzeEcg(samples, times, 0);
 console.log('ECG limpio  → bpm', a.bpm, '| picos', a.peaks.length, '| calidad', a.quality.toFixed(2), a.qualityLabel, '| fs', a.fs.toFixed(1));
-const m = buildMeasurement(packets, a, seconds, 0);
-console.log('Nivel:', m.level, '|', m.headline, '| SpO2', m.spo2, '| BPM final', m.bpm);
+const m = buildMeasurement(a, seconds, 0);
+console.log('Nivel:', m.level, '|', m.headline, '| BPM final', m.bpm);
 
 // Señal invertida (electrodos al revés)
 const inv = analyzeEcg(samples.map((v) => 1023 - v), times, 0);

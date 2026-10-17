@@ -19,7 +19,7 @@ export function ScanScreen({
   const [error, setError] = useState('');
   const [elapsed, setElapsed] = useState(0);
   const [view, setView] = useState<number[]>([]);
-  const [live, setLive] = useState({ bpm: 0, spo2: 0, leadsOff: false });
+  const [live, setLive] = useState({ bpm: 0, leadsOff: false });
 
   const packets = useRef<Packet[]>([]);
   const startedAt = useRef(0);
@@ -64,13 +64,18 @@ export function ScanScreen({
     const id = setInterval(async () => {
       const secs = (Date.now() - startedAt.current) / 1000;
       const all = packets.current;
-      const recent = all.slice(-150); // ~3 s
-      const last = all[all.length - 1];
+      const lastT = all.length ? all[all.length - 1].t : 0;
+      let i = all.length;
+      while (i > 0 && lastT - all[i - 1].t <= 3000) i--; // últimos 3 s para la gráfica
+      const recent = all.slice(i);
+      let j = all.length;
+      while (j > 0 && lastT - all[j - 1].t <= 10000) j--; // últimos 10 s para el pulso en vivo
+      const win = all.slice(j).filter((p) => p.ecg >= 0);
+      const est = win.length > 300 ? analyzeEcg(win.map((p) => p.ecg), win.map((p) => p.t)).bpm : 0;
       setElapsed(Math.min(secs, SCAN_SECONDS));
       setView(recent.filter((p) => p.ecg >= 0).map((p) => p.ecg));
       setLive({
-        bpm: last?.bpm ?? 0,
-        spo2: last?.spo2 ?? 0,
+        bpm: est,
         leadsOff: recent.length > 20 && recent.slice(-25).every((p) => p.ecg === -1),
       });
 
@@ -85,7 +90,7 @@ export function ScanScreen({
           ecgPk.map((p) => p.t),
           leadsOffPct / 100,
         );
-        onDone(buildMeasurement(all, analysis, SCAN_SECONDS, leadsOffPct));
+        onDone(buildMeasurement(analysis, SCAN_SECONDS, leadsOffPct));
       }
     }, 200);
     return () => clearInterval(id);
@@ -114,21 +119,18 @@ export function ScanScreen({
         {running && (
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-lg bg-blue-50 p-3 text-center">
-              <p className="text-xs font-medium text-blue-600">Pulso (dedo)</p>
-              <p className="text-2xl font-bold text-gray-900">{live.bpm > 0 ? live.bpm : '--'}</p>
+              <p className="text-xs font-medium text-blue-600">Pulso estimado</p>
+              <p className="text-2xl font-bold text-gray-900">{live.bpm > 0 ? `${live.bpm} BPM` : '--'}</p>
             </div>
             <div className="rounded-lg bg-blue-50 p-3 text-center">
-              <p className="text-xs font-medium text-blue-600">SpO₂</p>
-              <p className="text-2xl font-bold text-gray-900">{live.spo2 > 0 ? `${live.spo2}%` : '--'}</p>
+              <p className="text-xs font-medium text-blue-600">Electrodos</p>
+              <p className="text-2xl font-bold text-gray-900">{live.leadsOff ? '⚠️ Sueltos' : '🟢 Bien'}</p>
             </div>
           </div>
         )}
 
         {running && live.leadsOff && (
           <p className="mt-3 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">⚠️ Electrodos desconectados. Revisa que estén bien pegados.</p>
-        )}
-        {running && elapsed > 12 && live.bpm === 0 && (
-          <p className="mt-3 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">☝ No se detecta el dedo en el sensor MAX30102.</p>
         )}
         {error && <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
       </Card>
