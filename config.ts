@@ -1,10 +1,12 @@
 // Duración del escaneo (segundos). Cámbiala aquí si quieren más o menos tiempo.
 export const SCAN_SECONDS = 60;
 
-export const DEFAULT_MODEL = 'claude-haiku-5-5';
+// Modelos de Google Gemini con capa gratuita
+export const DEFAULT_MODEL = 'gemini-3.8-flash';
 export const MODELS = [
-  { id: 'claude-haiku-5-5', label: 'Haiku 5.5 (rápido y barato)' },
-  { id: 'claude-sonnet-5-5', label: 'Sonnet 5.5 (más completo)' },
+  { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash (recomendado)' },
+  { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite (más límite gratis)' },
+  { id: 'gemini-3.6-flash', label: 'Gemini 3.6 Flash' },
 ];
 
 export const DISCLAIMER =

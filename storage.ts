@@ -1,4 +1,4 @@
-import { DEFAULT_MODEL } from '../config';
+import { DEFAULT_MODEL, MODELS } from '../config';
 import type { Settings } from '../types';
 
 export function load<T>(key: string, fallback: T): T {
@@ -18,7 +18,11 @@ export function save(key: string, value: unknown): void {
   }
 }
 
-export const loadSettings = (): Settings =>
-  load<Settings>('bh_settings', { apiKey: '', model: DEFAULT_MODEL, voice: true });
+export const loadSettings = (): Settings => {
+  const s = load<Settings>('bh_settings', { apiKey: '', model: DEFAULT_MODEL, voice: true });
+  // Si había guardado un modelo que ya no existe, se usa el predeterminado
+  if (!MODELS.some((m) => m.id === s.model)) s.model = DEFAULT_MODEL;
+  return s;
+};
 
 export const saveSettings = (s: Settings) => save('bh_settings', s);

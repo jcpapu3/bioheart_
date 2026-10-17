@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card } from './ui';
-import { askClaude, buildSystemPrompt } from '../services/aiService';
+import { askAI, buildSystemPrompt } from '../services/aiService';
 import { listen, micAvailable, speak, stopSpeaking } from '../services/voice';
 import type { ChatMsg, Measurement, Settings } from '../types';
 
@@ -35,7 +35,7 @@ export function Chat({
     setBusy(true);
     setError('');
     try {
-      const reply = await askClaude(settings.apiKey, settings.model, system, msgs);
+      const reply = await askAI(settings.apiKey, settings.model, system, msgs);
       setHistory([...msgs, { role: 'assistant', content: reply }]);
       if (voiceRef.current) void speak(reply);
     } catch (e: any) {
@@ -87,7 +87,7 @@ export function Chat({
             'Genera un resumen breve (máximo 6 líneas, texto plano) con los datos de la medición y lo que te conté sobre mí, para mostrárselo a un profesional de la salud. Termina recordando que es un prototipo educativo.',
         },
       ];
-      setSummary(await askClaude(settings.apiKey, settings.model, system, ask2));
+      setSummary(await askAI(settings.apiKey, settings.model, system, ask2));
     } catch (e: any) {
       setError(e?.message || 'No se pudo generar el resumen.');
     } finally {
@@ -99,7 +99,7 @@ export function Chat({
     return (
       <Card title="Asistente de IA">
         <p className="mb-3 text-sm text-gray-600">
-          Para hablar con el asistente agrega tu API key de Anthropic en Ajustes. La clave se guarda solo en este celular.
+          Para hablar con el asistente agrega tu API key gratis de Google Gemini en Ajustes. La clave se guarda solo en este celular.
         </p>
         <Button className="w-full" onClick={onOpenSettings}>⚙ Abrir ajustes</Button>
       </Card>
