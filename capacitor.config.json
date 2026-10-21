@@ -1,8 +1,0 @@
-{
-  "appId": "com.bioheart.app",
-  "appName": "Bio-Heart",
-  "webDir": "dist",
-  "plugins": {
-    "CapacitorHttp": { "enabled": true }
-  }
-}
