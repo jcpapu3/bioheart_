@@ -4,7 +4,8 @@ import { PrepareScreen } from './components/PrepareScreen';
 import { ScanScreen } from './components/ScanScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { SettingsModal } from './components/SettingsModal';
-import { DISCLAIMER, STEP_NAMES } from './config';
+import { Logo } from './components/ui';
+import { DISCLAIMER } from './config';
 import { bluetooth } from './services/dataSource';
 import { loadSettings, saveSettings } from './services/storage';
 import type { Connection, Measurement, Settings } from './types';
@@ -34,34 +35,43 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header className="border-b border-gray-200 bg-white shadow-sm">
+    <div className="min-h-screen bg-bg" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <header className="border-b border-line bg-card/80 backdrop-blur">
         <div className="mx-auto flex max-w-xl items-center justify-between px-4 py-3">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">❤️ Bio-Heart</h1>
-            <p className="text-xs text-gray-500">
-              Paso {step} de 4 · {STEP_NAMES[step - 1]}
-              {conn && <> · {conn.mode === 'demo' ? 'Demo' : conn.device?.name}</>}
-            </p>
+          <div className="flex items-center gap-3">
+            <Logo />
+            <div>
+              <h1 className="text-xl font-bold leading-tight text-ink">
+                Bio<span className="text-cyan-400">-Heart</span>
+              </h1>
+              <p className="text-xs text-muted">
+                Tu salud, en tiempo real
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {conn && step !== 3 && (
-              <button onClick={disconnect} className="rounded-lg bg-gray-100 px-3 py-2 text-xs text-gray-700">Desconectar</button>
+              <button onClick={disconnect} className="rounded-xl border border-line bg-card2 px-3 py-2 text-xs text-slate-300">Desconectar</button>
             )}
-            <button onClick={() => setShowSettings(true)} className="rounded-lg bg-gray-100 px-3 py-2 text-lg" aria-label="Ajustes">⚙</button>
+            <button onClick={() => setShowSettings(true)} className="rounded-xl border border-line bg-card2 px-3 py-2 text-lg text-slate-300" aria-label="Ajustes">⚙</button>
           </div>
         </div>
         <div className="mx-auto flex max-w-xl items-center justify-center px-4 pb-3">
+          <span className="sr-only">Paso {step} de 4</span>
           {[1, 2, 3, 4].map((n) => (
             <div key={n} className="flex items-center">
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
-                  n < step ? 'bg-green-500 text-white' : n === step ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
+                  n < step
+                    ? 'bg-emerald-500 text-white'
+                    : n === step
+                      ? 'bg-gradient-to-br from-brand to-sky-400 text-white shadow-glow'
+                      : 'border border-line bg-card2 text-muted'
                 }`}
               >
                 {n < step ? '✓' : n}
               </div>
-              {n < 4 && <div className={`h-1 w-10 ${n < step ? 'bg-green-500' : 'bg-gray-300'}`} />}
+              {n < 4 && <div className={`h-0.5 w-10 ${n < step ? 'bg-emerald-500' : 'bg-line'}`} />}
             </div>
           ))}
         </div>
@@ -98,8 +108,8 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-gray-200 bg-gray-100">
-        <p className="mx-auto max-w-xl px-4 py-3 text-center text-xs text-gray-600">⚠️ {DISCLAIMER}</p>
+      <footer className="border-t border-line bg-card">
+        <p className="mx-auto max-w-xl px-4 py-3 text-center text-xs text-muted">⚠️ {DISCLAIMER}</p>
       </footer>
 
       {showSettings && (

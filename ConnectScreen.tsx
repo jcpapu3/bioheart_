@@ -62,15 +62,18 @@ export function ConnectScreen({ onConnected }: { onConnected: (c: Connection) =>
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-center gap-2 text-sm text-muted">
+        <span className="h-2.5 w-2.5 rounded-full bg-slate-500" /> Desconectado
+      </div>
       <Card title="Paso 1 — Conectar el dispositivo">
-        <ol className="mb-4 list-decimal space-y-1 pl-5 text-sm text-gray-600">
+        <ol className="mb-4 list-decimal space-y-1 pl-5 text-sm text-muted">
           <li>Enciende el Arduino (el HC-05 debe parpadear).</li>
           <li>En Ajustes de Android &gt; Bluetooth, empareja <b>HC-05</b> (clave <b>1234</b> o 0000).</li>
           <li>Vuelve aquí y pulsa <b>Buscar</b>.</li>
         </ol>
 
         {!isNative && (
-          <p className="mb-4 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">
+          <p className="mb-4 rounded-lg bg-amber-400/10 p-3 text-sm text-amber-200">
             El Bluetooth solo funciona en la app instalada en el celular. Aquí puedes probar el modo demostración.
           </p>
         )}
@@ -83,7 +86,7 @@ export function ConnectScreen({ onConnected }: { onConnected: (c: Connection) =>
               </Button>
             )}
             <Button className="w-full" disabled={scanning || !!busy} onClick={scan}>
-              {scanning ? 'Buscando (5 s)...' : 'BUSCAR DISPOSITIVOS'}
+              {scanning ? 'Buscando (5 s)...' : '🔵 Conectar'}
             </Button>
 
             {devices.map((d) => (
@@ -91,24 +94,24 @@ export function ConnectScreen({ onConnected }: { onConnected: (c: Connection) =>
                 key={d.address}
                 disabled={!!busy}
                 onClick={() => connect(d)}
-                className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-left active:bg-blue-50"
+                className="flex w-full items-center justify-between rounded-lg border border-line bg-card2 px-4 py-3 text-left active:bg-card2"
               >
                 <span>
-                  <span className="block font-semibold text-gray-900">{d.name}</span>
-                  <span className="block text-xs text-gray-500">{d.address}</span>
+                  <span className="block font-semibold text-ink">{d.name}</span>
+                  <span className="block text-xs text-muted">{d.address}</span>
                 </span>
-                <span className="text-blue-600">Conectar →</span>
+                <span className="text-cyan-400">Conectar →</span>
               </button>
             ))}
 
-            <details className="text-sm text-gray-600">
+            <details className="text-sm text-muted">
               <summary className="cursor-pointer">¿No aparece? Escribir dirección manual</summary>
               <div className="mt-2 flex gap-2">
                 <input
                   value={manual}
                   onChange={(e) => setManual(e.target.value.toUpperCase())}
                   placeholder="00:11:22:33:44:55"
-                  className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2"
+                  className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2"
                 />
                 <Button
                   variant="secondary"
@@ -122,8 +125,8 @@ export function ConnectScreen({ onConnected }: { onConnected: (c: Connection) =>
           </div>
         )}
 
-        {busy && <p className="mt-4 text-center text-sm font-medium text-blue-700">⏳ {busy}</p>}
-        {error && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+        {busy && <p className="mt-4 text-center text-sm font-medium text-cyan-300">⏳ {busy}</p>}
+        {error && <p className="mt-4 rounded-lg border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-300">{error}</p>}
       </Card>
 
       <Button variant="secondary" className="w-full" onClick={() => onConnected({ mode: 'demo' })}>

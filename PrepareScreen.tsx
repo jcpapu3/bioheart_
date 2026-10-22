@@ -25,22 +25,22 @@ export function PrepareScreen({ onNext, onBack }: { onNext: () => void; onBack: 
 
         <div className="space-y-2">
           {electrodes.map((e) => (
-            <div key={e.tag} className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
+            <div key={e.tag} className="flex items-center gap-3 rounded-lg bg-card2 p-3">
               <span className={`flex h-9 w-9 flex-none items-center justify-center rounded-full text-sm font-bold text-white ${e.color}`}>{e.tag}</span>
               <div>
-                <p className="font-semibold text-gray-900">{e.title}</p>
-                <p className="text-sm text-gray-600">{e.text}</p>
+                <p className="font-semibold text-ink">{e.title}</p>
+                <p className="text-sm text-muted">{e.text}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-gray-600">
+        <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-muted">
           <li>Limpia y seca la piel antes de pegar los electrodos.</li>
           <li>Siéntate, relájate y no hables durante la medición.</li>
         </ul>
 
-        <label className="mt-4 flex items-center gap-3 text-sm font-medium text-gray-800">
+        <label className="mt-4 flex items-center gap-3 text-sm font-medium text-ink">
           <input type="checkbox" checked={ready} onChange={(e) => setReady(e.target.checked)} className="h-5 w-5" />
           Ya me coloqué los electrodos
         </label>

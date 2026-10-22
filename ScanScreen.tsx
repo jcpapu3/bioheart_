@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Card, EcgChart } from './ui';
+import { Button, EcgChart } from './ui';
 import { SCAN_SECONDS } from '../config';
 import { bluetooth, demo } from '../services/dataSource';
 import { analyzeEcg } from '../services/ecgProcessor';
@@ -98,56 +98,74 @@ export function ScanScreen({
 
   const left = Math.max(0, Math.ceil(SCAN_SECONDS - elapsed));
 
+  const alert = running && live.leadsOff ? 'Electrodos sueltos: revisa que estén bien pegados' : '';
+
   return (
     <div className="space-y-4">
-      <Card title="Paso 3 — Escaneo">
-        <div className="mb-4 text-center">
-          <div className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-500 text-3xl ${running ? 'animate-pulse' : ''}`}>❤️</div>
-          <p className="mt-3 text-4xl font-bold text-gray-900">
-            {Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}
-          </p>
-          <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
-            <div className="h-2 rounded-full bg-green-500 transition-all" style={{ width: `${(elapsed / SCAN_SECONDS) * 100}%` }} />
+      <div className="flex items-center justify-between rounded-3xl border border-line bg-card px-5 py-4 shadow-card">
+        <div className="flex items-center gap-4">
+          <div className={`flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-heart text-2xl ${running ? 'ring' : ''}`}>
+            <span className={running ? 'beat' : ''}>❤️</span>
           </div>
-          <p className="mt-2 text-sm text-gray-600">
-            {running ? 'Mantén el cuerpo quieto y no hables.' : 'Cuando estés listo, pulsa iniciar.'}
+          <div>
+            <p className="text-4xl font-bold tabular-nums text-ink">
+              {Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}
+            </p>
+            <p className="text-xs text-muted">{running ? 'Quieto y sin hablar' : 'Listo para iniciar'}</p>
+          </div>
+        </div>
+        <span className="flex items-center gap-2 text-sm text-emerald-300">
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" /> Conectado
+        </span>
+      </div>
+      <div className="h-2 w-full rounded-full bg-card2">
+        <div className="h-2 rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all" style={{ width: `${(elapsed / SCAN_SECONDS) * 100}%` }} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-3xl border border-line bg-card p-4 shadow-card">
+          <p className="flex items-center gap-2 text-sm font-semibold text-heart">♥ BPM</p>
+          <p className="mt-2 text-5xl font-bold text-ink">
+            {running && live.bpm > 0 ? live.bpm : '--'} <span className="text-base font-medium text-muted">lpm</span>
           </p>
         </div>
+        <div className="rounded-3xl border border-line bg-card p-4 shadow-card">
+          <p className="flex items-center gap-2 text-sm font-semibold text-cyan-300">💧 Electrodos</p>
+          <p className="mt-2 text-4xl font-bold text-ink">{!running ? '--' : live.leadsOff ? 'Sueltos' : 'Bien'}</p>
+        </div>
+      </div>
 
-        <EcgChart data={view} />
+      <div className="rounded-3xl border border-line bg-card p-4 shadow-card">
+        <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-cyan-300">◆ ECG</p>
+        <EcgChart data={view} height={150} />
+        <div className="mt-1 flex justify-between px-1 text-xs text-muted">
+          <span>-3 s</span><span>-2 s</span><span>-1 s</span><span>ahora</span>
+        </div>
+      </div>
 
-        {running && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-lg bg-blue-50 p-3 text-center">
-              <p className="text-xs font-medium text-blue-600">Pulso estimado</p>
-              <p className="text-2xl font-bold text-gray-900">{live.bpm > 0 ? `${live.bpm} BPM` : '--'}</p>
-            </div>
-            <div className="rounded-lg bg-blue-50 p-3 text-center">
-              <p className="text-xs font-medium text-blue-600">Electrodos</p>
-              <p className="text-2xl font-bold text-gray-900">{live.leadsOff ? '⚠️ Sueltos' : '🟢 Bien'}</p>
-            </div>
-          </div>
-        )}
-
-        {running && live.leadsOff && (
-          <p className="mt-3 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800">⚠️ Electrodos desconectados. Revisa que estén bien pegados.</p>
-        )}
-        {error && <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-      </Card>
+      <div
+        className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold ${
+          alert ? 'border-amber-400/40 bg-amber-400/10 text-amber-200' : 'border-rose-400/30 bg-rose-500/10 text-rose-300'
+        }`}
+      >
+        <span>⚠</span> {alert || 'Sin alertas'}
+      </div>
+      {error && <p className="rounded-2xl border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-300">{error}</p>}
 
       <div className="flex gap-3">
         <Button
           variant="secondary"
+          className={running ? 'flex-1' : ''}
           onClick={async () => {
             setRunning(false);
             await stopSource();
             onCancel();
           }}
         >
-          {running ? 'CANCELAR' : '← Atrás'}
+          {running ? 'Desconectar' : '← Atrás'}
         </Button>
         {!running && (
-          <Button variant="primary" className="flex-1" onClick={start}>
+          <Button variant="blue" className="flex-1" onClick={start}>
             INICIAR ESCANEO
           </Button>
         )}

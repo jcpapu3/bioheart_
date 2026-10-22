@@ -98,7 +98,7 @@ export function Chat({
   if (!settings.apiKey) {
     return (
       <Card title="Asistente de IA">
-        <p className="mb-3 text-sm text-gray-600">
+        <p className="mb-3 text-sm text-muted">
           Para hablar con el asistente agrega tu API key gratis de Google Gemini en Ajustes. La clave se guarda solo en este celular.
         </p>
         <Button className="w-full" onClick={onOpenSettings}>⚙ Abrir ajustes</Button>
@@ -111,7 +111,7 @@ export function Chat({
   return (
     <Card title="Asistente de IA">
       <div className="mb-3 flex justify-end">
-        <button onClick={onVoiceToggle} className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700">
+        <button onClick={onVoiceToggle} className="rounded-full bg-card2 px-3 py-1 text-sm text-slate-300">
           {settings.voice ? '🔊 Voz activada' : '🔇 Voz apagada'}
         </button>
       </div>
@@ -121,18 +121,18 @@ export function Chat({
           <div
             key={i}
             className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-2 text-sm ${
-              msg.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
+              msg.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-card2 text-ink'
             }`}
           >
             {msg.content}
           </div>
         ))}
-        {busy && <div className="w-fit rounded-2xl bg-gray-100 px-4 py-2 text-sm text-gray-500">Escribiendo...</div>}
+        {busy && <div className="w-fit rounded-2xl bg-card2 px-4 py-2 text-sm text-muted">Escribiendo...</div>}
         <div ref={bottom} />
       </div>
 
       {error && (
-        <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="mt-3 rounded-lg border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-300">
           {error}
           {shown.length === 0 && (
             <button className="ml-2 underline" onClick={() => ask([HELLO])}>Reintentar</button>
@@ -148,7 +148,7 @@ export function Chat({
         }}
       >
         {mic && (
-          <button type="button" onClick={dictate} disabled={busy} className="rounded-lg bg-gray-200 px-3 text-xl disabled:opacity-50" aria-label="Hablar">
+          <button type="button" onClick={dictate} disabled={busy} className="rounded-lg bg-card2 px-3 text-xl disabled:opacity-50" aria-label="Hablar">
             🎤
           </button>
         )}
@@ -156,7 +156,7 @@ export function Chat({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribe tu respuesta..."
-          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          className="min-w-0 flex-1 rounded-lg border border-line px-3 py-2 text-sm"
         />
         <Button type="submit" disabled={busy || !input.trim()}>Enviar</Button>
       </form>
@@ -169,7 +169,7 @@ export function Chat({
         </div>
       )}
       {summary && (
-        <div className="mt-3 whitespace-pre-wrap rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-gray-800">{summary}</div>
+        <div className="mt-3 whitespace-pre-wrap rounded-lg border border-cyan-400/30 bg-card2 p-3 text-sm text-ink">{summary}</div>
       )}
     </Card>
   );
