@@ -1,6 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html, body { margin: 0; background: #eff6ff; -webkit-tap-highlight-color: transparent; }
-button, input, select { font: inherit; }
